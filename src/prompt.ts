@@ -9,7 +9,7 @@ import {
 import { getConfig } from './helpers/config';
 import { projectName } from './helpers/constants';
 import { KnownError } from './helpers/error';
-import clipboardy from 'clipboardy';
+import { spawn } from 'child_process';
 import i18n from './helpers/i18n';
 import { appendToShellHistory } from './helpers/shell-history';
 
@@ -198,7 +198,9 @@ async function runOrReviseFlow(
         label: '📋 ' + i18n.t('Copy'),
         hint: i18n.t('Copy the generated script to your clipboard'),
         value: async () => {
-          await clipboardy.write(script);
+          const pbcopy = spawn('pbcopy');
+          pbcopy.stdin.write(script);
+          pbcopy.stdin.end();
           p.outro(i18n.t('Copied to clipboard!'));
         },
       },
